@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: aai-mock
+  name: aai-mock
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aai-mock
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: aai-mock
+    spec:
+      containers:
+        - image: registry.gitlab.ics.muni.cz:443/perun/deployment/proxyidp/proxyidp-public-docker-images/ls_aai_mock:2.5.2-broker2.1.10-tomcat9.0-jdk11
+          name: ls-aai-mock
+          ports:
+            - containerPort: 8080
+              hostPort: 8080
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/lsaai-mock
+              name: aai-mock-claim0
+      restartPolicy: Always
+      volumes:
+        - name: aai-mock-claim0
+          persistentVolumeClaim:
+            claimName: aai-mock-claim0

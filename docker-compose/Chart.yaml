@@ -1,0 +1,6 @@
+name: starter-kit-lsaai-mock
+description: Starter Kit lsaai mock
+version: 0.0.1
+apiVersion: v2
+keywords:
+  - docker-compose

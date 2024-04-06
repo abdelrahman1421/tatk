@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    db: aai-db
+  name: aai-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      db: aai-db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        db: aai-db
+    spec:
+      containers:
+        - env:
+            - name: MYSQL_DATABASE
+              value: aai
+            - name: MYSQL_PASSWORD
+              value: aaiPass
+            - name: MYSQL_ROOT_HOST
+              value: '%'
+            - name: MYSQL_ROOT_PASSWORD
+              value: aaiPass
+            - name: MYSQL_USER
+              value: aai
+          image: mysql/mysql-server:latest
+          securityContext:
+           readOnlyRootFilesystem: true
+          name: ls-aai-db
+          ports:
+            - containerPort: 3306
+              hostPort: 3306
+              protocol: TCP
+          volumeMounts:
+            - mountPath: /docker-entrypoint-initdb.d/
+              name: db-config
+              subPath: 1.sql
+              readOnly: false
+      restartPolicy: Always
+      volumes:
+        - name: db-config
+          configMap:
+             name: db-config
